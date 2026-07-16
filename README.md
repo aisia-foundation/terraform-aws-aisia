@@ -8,7 +8,7 @@
 
 # terraform-aws-aisia
 
-> **v6.12.56** — module registry — bootstrap AWS Swarm + substrat AISIA
+> **v6.12.57** — module registry — bootstrap AWS Swarm + substrat AISIA
 
 ## Cœur d'AISIA (identité produit)
 
@@ -23,7 +23,7 @@ puis cloud si nécessaire — via `BanditRouter`, pas un simple reverse-proxy.
 |--------------|-------|
 | 1 provider fixe | **88** providers + **58** modèles locaux |
 | Stateless | Qdrant + audit AI Act + multi-tenant |
-| SaaS opaque | Déployable Swarm/K8s — **v6.12.56** LIVE |
+| SaaS opaque | Déployable Swarm/K8s — **v6.12.57** LIVE |
 
 Documentation : [README racine](../../../../README.md) ·
 [Product Identity](../../../../specification/03-Project-State/Product-Identity-AISIA.md)
@@ -63,7 +63,7 @@ module "aisia_aws_swarm" {
 
   org_id      = "acme"
   service_key = "C1"
-  image_tag   = "v6.12.56"
+  image_tag   = "v6.12.57"
   tier        = "saas"
 
   region          = "eu-west-3"
@@ -91,7 +91,7 @@ docker swarm join --token <TOKEN> <manager_private_ip>:2377
 | `node_count` | Nombre de workers Swarm (le manager est en plus) | `number` | `1` | non |
 | `instance_flavor` | Type d'instance EC2 (manager + workers) | `string` | `"t3.large"` | non |
 | `image_registry` | Registry des images AISIA | `string` | `"registry.aisia.fr"` | non |
-| `image_tag` | Tag d'image AISIA à déployer | `string` | `"v6.12.56"` | non |
+| `image_tag` | Tag d'image AISIA à déployer | `string` | `"v6.12.57"` | non |
 | `domain` | Domaine custom (vide = *.aisia.fr) | `string` | `""` | non |
 | `tier` | Offre tarifaire (saas \| baas \| paas) | `string` | `"saas"` | non |
 | `gpu_enabled` | Signal GPU — utiliser un instance_flavor GPU (g5.xlarge, p3.2xlarge) | `bool` | `false` | non |
@@ -155,4 +155,4 @@ docker swarm join --token <TOKEN> <manager_private_ip>:2377
 - **Référence API** : [api.aisia.fr/docs](https://api.aisia.fr/docs)
 - **Provider Terraform** : [aisia-foundation/aisia](https://registry.terraform.io/providers/aisia-foundation/aisia/latest/docs)
 - **Guide d'implémentation** : [getting-started](https://registry.terraform.io/providers/aisia-foundation/aisia/latest/docs/guides/getting-started)
-- **Version LIVE** : **v6.12.56**
+- **Version LIVE** : **v6.12.57**
