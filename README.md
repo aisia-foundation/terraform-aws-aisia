@@ -8,7 +8,7 @@
 
 # terraform-aws-aisia
 
-> **v6.12.78** — module registry — bootstrap AWS Swarm + substrat AISIA
+> **v6.12.79** — module registry — bootstrap AWS Swarm + substrat AISIA
 
 ## Cœur d'AISIA (identité produit)
 
@@ -24,7 +24,7 @@ puis cloud si nécessaire — via `BanditRouter`, pas un simple reverse-proxy.
 | 1 provider fixe | **88** providers déclarés |
 | Catalogue modèles | **869** modèles catalogue · **117** locaux déclarés · **59** locaux actifs |
 | Stateless | Qdrant + audit AI Act + multi-tenant |
-| SaaS opaque | Déployable Swarm/K8s — **v6.12.78** LIVE |
+| SaaS opaque | Déployable Swarm/K8s — **v6.12.79** LIVE |
 
 Documentation : [README racine](../../../../README.md) ·
 [Product Identity](../../../../specification/03-Project-State/Product-Identity-AISIA.md)
@@ -64,7 +64,7 @@ module "aisia_aws_swarm" {
 
   org_id      = "acme"
   service_key = "C1"
-  image_tag   = "v6.12.78"
+  image_tag   = "v6.12.79"
   tier        = "saas"
 
   region          = "eu-west-3"
@@ -92,7 +92,7 @@ docker swarm join --token <TOKEN> <manager_private_ip>:2377
 | `node_count` | Nombre de workers Swarm (le manager est en plus) | `number` | `1` | non |
 | `instance_flavor` | Type d'instance EC2 (manager + workers) | `string` | `"t3.large"` | non |
 | `image_registry` | Registry des images AISIA | `string` | `"registry.aisia.fr"` | non |
-| `image_tag` | Tag d'image AISIA à déployer | `string` | `"v6.12.78"` | non |
+| `image_tag` | Tag d'image AISIA à déployer | `string` | `"v6.12.79"` | non |
 | `domain` | Domaine custom (vide = *.aisia.fr) | `string` | `""` | non |
 | `tier` | Offre tarifaire (saas \| baas \| paas) | `string` | `"saas"` | non |
 | `gpu_enabled` | Signal GPU — utiliser un instance_flavor GPU (g5.xlarge, p3.2xlarge) | `bool` | `false` | non |
@@ -159,7 +159,7 @@ docker swarm join --token <TOKEN> <manager_private_ip>:2377
 | `node_count` | `number` | `1` | Nombre de workers Swarm (le manager est en plus). |
 | `instance_flavor` | `string` | `"t3.large"` | Type d'instance EC2 des nœuds Swarm (manager + workers). Ex : t3.large, m6i.xlarge. |
 | `image_registry` | `string` | `"registry.aisia.fr"` | Registry des images AISIA. |
-| `image_tag` | `string` | `"v6.12.78"` | Tag d'image AISIA à déployer (ex. v6.12.78). |
+| `image_tag` | `string` | `"v6.12.79"` | Tag d'image AISIA à déployer (ex. v6.12.79). |
 | `domain` | `string` | `""` | Domaine custom de l'org (vide = *.aisia.fr). |
 | `tier` | `string` | `"saas"` | Offre tarifaire AISIA (saas | baas | paas). |
 | `gpu_enabled` | `bool` | `false` | Signal GPU actif. Pour GPU sur Swarm, utiliser un instance_flavor GPU (ex. g5.xlarge, p3.2xlarge). |
@@ -198,23 +198,23 @@ docker swarm join --token <TOKEN> <manager_private_ip>:2377
 - **Référence API** : [api.aisia.fr/docs](https://api.aisia.fr/docs)
 - **Provider Terraform** : [aisia-foundation/aisia](https://registry.terraform.io/providers/aisia-foundation/aisia/latest/docs)
 - **Guide d'implémentation** : [getting-started](https://registry.terraform.io/providers/aisia-foundation/aisia/latest/docs/guides/getting-started)
-- **Version LIVE** : **v6.12.78**
+- **Version LIVE** : **v6.12.79**
 
 <!-- TF-REGISTRY-STATUS -->
 ## Statut publication registry (honnête)
 
-> Mesuré à la régénération docs · version repo **v6.12.78** (`VERSION` modules + provider).
+> Mesuré à la régénération docs · version repo **v6.12.79** (`VERSION` modules + provider).
 
 | Artefact | Repo | Public registry.terraform.io |
 |----------|------|------------------------------|
-| Provider `aisia-foundation/aisia` | `6.12.78` | **6.12.75** ❌ écart |
-| Module `terraform-aisia-cluster` (`cluster/aisia`) | `6.12.78` | **6.12.75** ❌ écart |
-| Module `terraform-aisia-swarm` (`swarm/aisia`) | `6.12.78` | **6.12.75** ❌ écart |
-| Module `terraform-aws-aisia` (`aisia/aws`) | `6.12.78` | **6.12.75** ❌ écart |
-| Module `terraform-azure-aisia` (`aisia/azure`) | `6.12.78` | **6.12.75** ❌ écart |
-| Module `terraform-google-aisia` (`aisia/google`) | `6.12.78` | **absent public** ⚠️ |
-| Module `terraform-ovh-aisia` (`aisia/ovh`) | `6.12.78` | **6.12.75** ❌ écart |
-| Module `terraform-scaleway-aisia` (`aisia/scaleway`) | `6.12.78` | **6.12.75** ❌ écart |
+| Provider `aisia-foundation/aisia` | `6.12.79` | **6.12.78** ❌ écart |
+| Module `terraform-aisia-cluster` (`cluster/aisia`) | `6.12.79` | **6.12.78** ❌ écart |
+| Module `terraform-aisia-swarm` (`swarm/aisia`) | `6.12.79` | **6.12.78** ❌ écart |
+| Module `terraform-aws-aisia` (`aisia/aws`) | `6.12.79` | **6.12.78** ❌ écart |
+| Module `terraform-azure-aisia` (`aisia/azure`) | `6.12.79` | **6.12.78** ❌ écart |
+| Module `terraform-google-aisia` (`aisia/google`) | `6.12.79` | **absent public** ⚠️ |
+| Module `terraform-ovh-aisia` (`aisia/ovh`) | `6.12.79` | **6.12.78** ❌ écart |
+| Module `terraform-scaleway-aisia` (`aisia/scaleway`) | `6.12.79` | **6.12.78** ❌ écart |
 
 HCP privé (`app.terraform.io/AISIA`) : non interrogé ici (token fondateur). Ne pas écrire « 100 % registry » si une ligne public est absente ou en écart.
 
