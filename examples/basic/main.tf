@@ -32,7 +32,7 @@ module "aisia_aws_swarm" {
 
   org_id      = "acme"
   service_key = "C1"
-  image_tag   = "v6.12.89"
+  image_tag   = "v6.12.90"
   tier        = "saas"
 
   region          = "eu-west-3"
