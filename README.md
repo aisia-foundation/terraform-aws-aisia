@@ -8,7 +8,7 @@
 
 # terraform-aws-aisia
 
-> **v6.13.10** — module registry — bootstrap AWS Swarm + substrat AISIA
+> **v6.13.15** — module registry — bootstrap AWS Swarm + substrat AISIA
 
 ## Cœur d'AISIA (identité produit)
 
@@ -22,9 +22,10 @@ puis cloud si nécessaire — via `BanditRouter`, pas un simple reverse-proxy.
 | vs proxy LLM | AISIA |
 |--------------|-------|
 | 1 provider fixe | **167** moteurs IA |
-| Catalogue modèles | **9563** modèles |
+| Catalogue modèles | **9568** modèles |
+| Modèles locaux actifs | **58** / 132 catalogués |
 | Stateless | Qdrant + audit AI Act + multi-tenant |
-| SaaS opaque | Déployable Swarm/K8s — runtime **v6.13.10** · code **v6.13.10** |
+| SaaS opaque | Déployable Swarm/K8s — runtime **v6.13.15** · code **v6.13.15** |
 
 Documentation : [README racine](../../../../README.md) ·
 [Product Identity](../../../../specification/03-Project-State/Product-Identity-AISIA.md)
@@ -64,7 +65,7 @@ module "aisia_aws_swarm" {
 
   org_id      = "acme"
   service_key = "C1"
-  image_tag   = "v6.13.10"
+  image_tag   = "v6.13.15"
   tier        = "saas"
 
   region          = "eu-west-3"
@@ -92,7 +93,7 @@ docker swarm join --token <TOKEN> <manager_private_ip>:2377
 | `node_count` | Nombre de workers Swarm (le manager est en plus) | `number` | `1` | non |
 | `instance_flavor` | Type d'instance EC2 (manager + workers) | `string` | `"t3.large"` | non |
 | `image_registry` | Registry des images AISIA | `string` | `"registry.aisia.fr"` | non |
-| `image_tag` | Tag d'image AISIA à déployer | `string` | `"v6.13.10"` | non |
+| `image_tag` | Tag d'image AISIA à déployer | `string` | `"v6.13.15"` | non |
 | `domain` | Domaine custom (vide = *.aisia.fr) | `string` | `""` | non |
 | `tier` | Offre tarifaire (saas \| baas \| paas) | `string` | `"saas"` | non |
 | `gpu_enabled` | Signal GPU — utiliser un instance_flavor GPU (g5.xlarge, p3.2xlarge) | `bool` | `false` | non |
@@ -159,7 +160,7 @@ docker swarm join --token <TOKEN> <manager_private_ip>:2377
 | `node_count` | `number` | `1` | Nombre de workers Swarm (le manager est en plus). |
 | `instance_flavor` | `string` | `"t3.large"` | Type d'instance EC2 des nœuds Swarm (manager + workers). Ex : t3.large, m6i.xlarge. |
 | `image_registry` | `string` | `"registry.aisia.fr"` | Registry des images AISIA. |
-| `image_tag` | `string` | `"v6.13.10"` | Tag d'image AISIA à déployer (ex. v6.13.10). |
+| `image_tag` | `string` | `"v6.13.15"` | Tag d'image AISIA à déployer (ex. v6.13.15). |
 | `domain` | `string` | `""` | Domaine custom de l'org (vide = *.aisia.fr). |
 | `tier` | `string` | `"saas"` | Offre tarifaire AISIA (saas | baas | paas). |
 | `gpu_enabled` | `bool` | `false` | Signal GPU actif. Pour GPU sur Swarm, utiliser un instance_flavor GPU (ex. g5.xlarge, p3.2xlarge). |
@@ -198,23 +199,23 @@ docker swarm join --token <TOKEN> <manager_private_ip>:2377
 - **Référence API** : [api.aisia.fr/docs](https://api.aisia.fr/docs)
 - **Provider Terraform** : [aisia-foundation/aisia](https://registry.terraform.io/providers/aisia-foundation/aisia/latest/docs)
 - **Guide d'implémentation** : [getting-started](https://registry.terraform.io/providers/aisia-foundation/aisia/latest/docs/guides/getting-started)
-- **Version module / code** : **v6.13.10**
+- **Version module / code** : **v6.13.15**
 
 <!-- TF-REGISTRY-STATUS -->
 ## Statut publication registry (honnête)
 
-> Mesuré à la régénération docs · **version code TF** **v6.13.10** (`VERSION` modules + provider).
+> Mesuré à la régénération docs · **version code TF** **v6.13.15** (`VERSION` modules + provider).
 
 | Artefact | Repo | Public registry.terraform.io |
 |----------|------|------------------------------|
-| Provider `aisia-foundation/aisia` | `6.13.10` | **6.12.96** ❌ écart |
-| Module `terraform-aisia-cluster` (`cluster/aisia`) | `6.13.10` | **6.13.1** ❌ écart |
-| Module `terraform-aisia-swarm` (`swarm/aisia`) | `6.13.10` | **6.13.1** ❌ écart |
-| Module `terraform-aws-aisia` (`aisia/aws`) | `6.13.10` | **6.13.1** ❌ écart |
-| Module `terraform-azure-aisia` (`aisia/azure`) | `6.13.10` | **6.13.1** ❌ écart |
-| Module `terraform-google-aisia` (`aisia/google`) | `6.13.10` | **absent public** ⚠️ |
-| Module `terraform-ovh-aisia` (`aisia/ovh`) | `6.13.10` | **6.13.1** ❌ écart |
-| Module `terraform-scaleway-aisia` (`aisia/scaleway`) | `6.13.10` | **6.13.1** ❌ écart |
+| Provider `aisia-foundation/aisia` | `6.13.15` | **6.13.10** ❌ écart |
+| Module `terraform-aisia-cluster` (`cluster/aisia`) | `6.13.15` | **6.13.10** ❌ écart |
+| Module `terraform-aisia-swarm` (`swarm/aisia`) | `6.13.15` | **6.13.10** ❌ écart |
+| Module `terraform-aws-aisia` (`aisia/aws`) | `6.13.15` | **6.13.10** ❌ écart |
+| Module `terraform-azure-aisia` (`aisia/azure`) | `6.13.15` | **6.13.10** ❌ écart |
+| Module `terraform-google-aisia` (`aisia/google`) | `6.13.15` | **absent public** ⚠️ |
+| Module `terraform-ovh-aisia` (`aisia/ovh`) | `6.13.15` | **6.13.10** ❌ écart |
+| Module `terraform-scaleway-aisia` (`aisia/scaleway`) | `6.13.15` | **6.13.10** ❌ écart |
 
 HCP privé (`app.terraform.io/AISIA`) : modules + provider publiés via `scripts/ops/publish_terraform.sh --apply` (mesuré hors ce tableau). Ne pas écrire « 100 % registry public » si Google public est absent.
 
