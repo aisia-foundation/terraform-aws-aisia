@@ -1,5 +1,5 @@
 ###############################################################################
-# AISIA — Terraform AWS — EKS managed cluster (sprint v6.13.18)
+# AISIA — Terraform AWS — EKS managed cluster (sprint v6.14.1)
 #
 # Cluster EKS managed avec :
 #   - Control plane public + prive

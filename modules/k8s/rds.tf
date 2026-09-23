@@ -1,5 +1,5 @@
 ###############################################################################
-# AISIA — Terraform AWS — RDS Aurora PostgreSQL Serverless v2 (sprint v6.13.18)
+# AISIA — Terraform AWS — RDS Aurora PostgreSQL Serverless v2 (sprint v6.14.1)
 #
 # Cluster Aurora PostgreSQL serverless v2 utilise pour :
 #   - ETL CrateDB → Postgres (compat protocole pour BI / analytics)
