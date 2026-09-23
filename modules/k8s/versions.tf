@@ -1,5 +1,5 @@
 ###############################################################################
-# AISIA — Terraform AWS infrastructure (sprint v6.13.16)
+# AISIA — Terraform AWS infrastructure (sprint v6.13.18)
 #
 # Versions pinning : Terraform >= 1.7, AWS provider ~> 5.0
 ###############################################################################
@@ -40,7 +40,7 @@ provider "aws" {
       Project     = "AISIA"
       Environment = var.env
       ManagedBy   = "Terraform"
-      Sprint      = "v6.13.16"
+      Sprint      = "v6.13.18"
       Owner       = "sebastien.lambert"
     }
   }

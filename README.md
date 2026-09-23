@@ -8,7 +8,7 @@
 
 # terraform-aws-aisia
 
-> **v6.13.17** — module registry — bootstrap AWS Swarm + substrat AISIA
+> **v6.13.19** — module registry — bootstrap AWS Swarm + substrat AISIA
 
 ## Cœur d'AISIA (identité produit)
 
@@ -23,9 +23,9 @@ puis cloud si nécessaire — via `BanditRouter`, pas un simple reverse-proxy.
 |--------------|-------|
 | 1 provider fixe | **167** moteurs IA |
 | Catalogue modèles | **9568** modèles |
-| Modèles locaux actifs | **58** / 132 catalogués |
+| Modèles locaux actifs | **60** / 132 catalogués |
 | Stateless | Qdrant + audit AI Act + multi-tenant |
-| SaaS opaque | Déployable Swarm/K8s — runtime **v6.13.17** · code **v6.13.17** |
+| SaaS opaque | Déployable Swarm/K8s — runtime **v6.13.19** · code **v6.13.19** |
 
 Documentation : [README racine](../../../../README.md) ·
 [Product Identity](../../../../specification/03-Project-State/Product-Identity-AISIA.md)
@@ -65,7 +65,7 @@ module "aisia_aws_swarm" {
 
   org_id      = "acme"
   service_key = "C1"
-  image_tag   = "v6.13.17"
+  image_tag   = "v6.13.19"
   tier        = "saas"
 
   region          = "eu-west-3"
@@ -93,7 +93,7 @@ docker swarm join --token <TOKEN> <manager_private_ip>:2377
 | `node_count` | Nombre de workers Swarm (le manager est en plus) | `number` | `1` | non |
 | `instance_flavor` | Type d'instance EC2 (manager + workers) | `string` | `"t3.large"` | non |
 | `image_registry` | Registry des images AISIA | `string` | `"registry.aisia.fr"` | non |
-| `image_tag` | Tag d'image AISIA à déployer | `string` | `"v6.13.17"` | non |
+| `image_tag` | Tag d'image AISIA à déployer | `string` | `"v6.13.19"` | non |
 | `domain` | Domaine custom (vide = *.aisia.fr) | `string` | `""` | non |
 | `tier` | Offre tarifaire (saas \| baas \| paas) | `string` | `"saas"` | non |
 | `gpu_enabled` | Signal GPU — utiliser un instance_flavor GPU (g5.xlarge, p3.2xlarge) | `bool` | `false` | non |
@@ -105,7 +105,7 @@ docker swarm join --token <TOKEN> <manager_private_ip>:2377
 | `availability_zone` | AZ cible (vide = première AZ disponible) | `string` | `""` | non |
 | `node_disk_size_gb` | Taille disque EBS root (GiB) | `number` | `50` | non |
 | `ssh_public_key` | Clé publique SSH (OpenSSH). Vide = SSM uniquement | `string` | `""` | non |
-| `ssh_allowed_cidr` | CIDR autorisé pour SSH. Restreindre en production | `string` | `"0.0.0.0/0"` | non |
+| `ssh_allowed_cidr` | CIDR SSH optionnel ; `null` désactive SSH | `string` | `null` | non |
 
 ## Outputs
 
@@ -136,7 +136,7 @@ docker swarm join --token <TOKEN> <manager_private_ip>:2377
 - Le **join des workers** nécessite le token publié par le manager sur `/tmp/worker-token`
   après `docker swarm init`. Il n'est pas auto-joiné dans cette version (v1.0.0).
   Itération suivante : publication du token dans S3 SSE-KMS pour auto-join.
-- `ssh_allowed_cidr = "0.0.0.0/0"` est le défaut pour faciliter les tests.
+- SSH est désactivé par défaut. Fournir un CIDR d'administration explicite ou utiliser SSM/console.
   **En production, restreindre à l'IP fixe admin.**
 - Pour GPU : choisir un `instance_flavor` adapté (ex. `g5.xlarge` = 1x A10G,
   `p3.2xlarge` = 1x V100) et activer `gpu_enabled = true` pour signaler le besoin.
@@ -160,7 +160,7 @@ docker swarm join --token <TOKEN> <manager_private_ip>:2377
 | `node_count` | `number` | `1` | Nombre de workers Swarm (le manager est en plus). |
 | `instance_flavor` | `string` | `"t3.large"` | Type d'instance EC2 des nœuds Swarm (manager + workers). Ex : t3.large, m6i.xlarge. |
 | `image_registry` | `string` | `"registry.aisia.fr"` | Registry des images AISIA. |
-| `image_tag` | `string` | `"v6.13.17"` | Tag d'image AISIA à déployer (ex. v6.13.17). |
+| `image_tag` | `string` | `"v6.13.19"` | Tag d'image AISIA à déployer (ex. v6.13.19). |
 | `domain` | `string` | `""` | Domaine custom de l'org (vide = *.aisia.fr). |
 | `tier` | `string` | `"saas"` | Offre tarifaire AISIA (saas | baas | paas). |
 | `gpu_enabled` | `bool` | `false` | Signal GPU actif. Pour GPU sur Swarm, utiliser un instance_flavor GPU (ex. g5.xlarge, p3.2xlarge). |
@@ -172,7 +172,7 @@ docker swarm join --token <TOKEN> <manager_private_ip>:2377
 | `availability_zone` | `string` | `""` | AZ cible du subnet (vide = première AZ disponible de la région). |
 | `node_disk_size_gb` | `number` | `50` | Taille du disque EBS root des nœuds (GiB). |
 | `ssh_public_key` | `string` | `""` | Clé publique SSH (contenu OpenSSH). Vide = pas de key pair (accès SSM uniquement). |
-| `ssh_allowed_cidr` | `string` | `"0.0.0.0/0"` | CIDR autorisé pour SSH. Restreindre à l'IP fixe admin en production. |
+| `ssh_allowed_cidr` | `string` | `null` | CIDR optionnel autorisé pour SSH. Null désactive l'exposition SSH et impose SSM/console. |
 
 ### Outputs (parité `outputs.tf`)
 
@@ -199,23 +199,23 @@ docker swarm join --token <TOKEN> <manager_private_ip>:2377
 - **Référence API** : [api.aisia.fr/docs](https://api.aisia.fr/docs)
 - **Provider Terraform** : [aisia-foundation/aisia](https://registry.terraform.io/providers/aisia-foundation/aisia/latest/docs)
 - **Guide d'implémentation** : [getting-started](https://registry.terraform.io/providers/aisia-foundation/aisia/latest/docs/guides/getting-started)
-- **Version module / code** : **v6.13.17**
+- **Version module / code** : **v6.13.19**
 
 <!-- TF-REGISTRY-STATUS -->
 ## Statut publication registry (honnête)
 
-> Mesuré à la régénération docs · **version code TF** **v6.13.17** (`VERSION` modules + provider).
+> Mesuré à la régénération docs · **version code TF** **v6.13.19** (`VERSION` modules + provider).
 
 | Artefact | Repo | Public registry.terraform.io |
 |----------|------|------------------------------|
-| Provider `aisia-foundation/aisia` | `6.13.17` | **6.13.15** ❌ écart |
-| Module `terraform-aisia-cluster` (`cluster/aisia`) | `6.13.17` | **6.13.15** ❌ écart |
-| Module `terraform-aisia-swarm` (`swarm/aisia`) | `6.13.17` | **6.13.15** ❌ écart |
-| Module `terraform-aws-aisia` (`aisia/aws`) | `6.13.17` | **6.13.15** ❌ écart |
-| Module `terraform-azure-aisia` (`aisia/azure`) | `6.13.17` | **6.13.15** ❌ écart |
-| Module `terraform-google-aisia` (`aisia/google`) | `6.13.17` | **absent public** ⚠️ |
-| Module `terraform-ovh-aisia` (`aisia/ovh`) | `6.13.17` | **6.13.15** ❌ écart |
-| Module `terraform-scaleway-aisia` (`aisia/scaleway`) | `6.13.17` | **6.13.15** ❌ écart |
+| Provider `aisia-foundation/aisia` | `6.13.19` | **6.13.15** ❌ écart |
+| Module `terraform-aisia-cluster` (`cluster/aisia`) | `6.13.19` | **6.13.17** ❌ écart |
+| Module `terraform-aisia-swarm` (`swarm/aisia`) | `6.13.19` | **6.13.17** ❌ écart |
+| Module `terraform-aws-aisia` (`aisia/aws`) | `6.13.19` | **6.13.17** ❌ écart |
+| Module `terraform-azure-aisia` (`aisia/azure`) | `6.13.19` | **6.13.17** ❌ écart |
+| Module `terraform-google-aisia` (`aisia/google`) | `6.13.19` | **absent public** ⚠️ |
+| Module `terraform-ovh-aisia` (`aisia/ovh`) | `6.13.19` | **6.13.17** ❌ écart |
+| Module `terraform-scaleway-aisia` (`aisia/scaleway`) | `6.13.19` | **6.13.17** ❌ écart |
 
 HCP privé (`app.terraform.io/AISIA`) : modules + provider publiés via `scripts/ops/publish_terraform.sh --apply` (mesuré hors ce tableau). Ne pas écrire « 100 % registry public » si Google public est absent.
 

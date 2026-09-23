@@ -126,12 +126,15 @@ resource "aws_security_group" "swarm" {
   description = "AISIA Swarm cluster"
   vpc_id      = aws_vpc.this.id
 
-  ingress {
-    description = "SSH"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.ssh_allowed_cidr]
+  dynamic "ingress" {
+    for_each = var.ssh_allowed_cidr == null ? [] : [var.ssh_allowed_cidr]
+    content {
+      description = "SSH explicitement autorisé par le déploiement"
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = [ingress.value]
+    }
   }
 
   ingress {

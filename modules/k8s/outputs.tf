@@ -1,5 +1,5 @@
 ###############################################################################
-# AISIA — Terraform AWS outputs (sprint v6.13.16)
+# AISIA — Terraform AWS outputs (sprint v6.13.18)
 ###############################################################################
 
 ###############################################################################
@@ -149,6 +149,6 @@ output "deployment_summary" {
     db_endpoint   = aws_rds_cluster.aurora.endpoint
     vpc_id        = module.vpc.vpc_id
     secrets_count = length(aws_secretsmanager_secret.providers)
-    sprint        = "v6.13.16"
+    sprint        = "v6.13.18"
   }
 }

@@ -1,5 +1,5 @@
 ###############################################################################
-# AISIA — Terraform AWS — Secrets Manager (sprint v6.13.16)
+# AISIA — Terraform AWS — Secrets Manager (sprint v6.13.18)
 #
 # Cree N secrets vides (placeholders) pour cles API providers.
 # Les valeurs reelles doivent etre injectees POST-APPLY :
@@ -18,7 +18,7 @@
 # KMS key dediee aux secrets AISIA (rotation automatique annuelle)
 ###############################################################################
 resource "aws_kms_key" "secrets" {
-  description             = "AISIA Secrets Manager encryption key (sprint v6.13.16)"
+  description             = "AISIA Secrets Manager encryption key (sprint v6.13.18)"
   deletion_window_in_days = 30
   enable_key_rotation     = true
 
@@ -91,6 +91,6 @@ resource "aws_secretsmanager_secret_version" "aisia_config" {
     aurora_port     = aws_rds_cluster.aurora.port
     aurora_db_name  = var.db_name
     eks_endpoint    = module.eks.cluster_endpoint
-    sprint          = "v6.13.16"
+    sprint          = "v6.13.18"
   })
 }

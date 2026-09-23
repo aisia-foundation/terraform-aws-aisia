@@ -32,15 +32,16 @@ module "aisia_aws_swarm" {
 
   org_id      = "acme"
   service_key = "C1"
-  image_tag   = "v6.13.17"
+  image_tag   = "v6.13.19"
   tier        = "saas"
 
   region          = "eu-west-3"
   node_count      = 2
   instance_flavor = "t3.large"
 
-  # Restreindre SSH à votre IP en production (ici ouvert pour le test).
-  ssh_allowed_cidr = "0.0.0.0/0"
+  # SSH est désactivé par défaut ; fournir un CIDR d'administration explicite
+  # uniquement si l'accès SSM/console n'est pas disponible.
+  ssh_allowed_cidr = null
   # ssh_public_key = file("~/.ssh/id_rsa.pub")
 }
 

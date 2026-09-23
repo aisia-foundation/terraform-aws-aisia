@@ -1,5 +1,5 @@
 ###############################################################################
-# AISIA — Terraform AWS — VPC + Networking (sprint v6.13.16)
+# AISIA — Terraform AWS — VPC + Networking (sprint v6.13.18)
 #
 #   ┌──────────────────────────────────────────────────────────────────┐
 #   │ VPC /16  +  3 subnets publics + 3 subnets prives (multi-AZ)      │
@@ -18,7 +18,7 @@ locals {
   common_tags = {
     Project     = "AISIA"
     Environment = var.env
-    Sprint      = "v6.13.16"
+    Sprint      = "v6.13.18"
   }
 }
 
