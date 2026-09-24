@@ -60,8 +60,8 @@ provider "aws" {
 }
 
 module "aisia_aws_swarm" {
-  source  = "app.terraform.io/AISIA/aisia/aws"
-  version = "~> 1.0"
+  source  = "aisia-foundation/aisia/aws"
+  version = "6.14.1"
 
   org_id      = "acme"
   service_key = "C1"

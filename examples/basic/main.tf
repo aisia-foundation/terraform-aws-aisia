@@ -26,8 +26,8 @@ provider "aws" {
 # Substrat Swarm — 1 manager + 2 workers EC2
 ###############################################################################
 module "aisia_aws_swarm" {
-  # source = "app.terraform.io/AISIA/aisia/aws"
-  # version = "1.0.0"
+  # source  = "aisia-foundation/aisia/aws"
+  # version = "6.14.1"
   source = "../../"
 
   org_id      = "acme"
