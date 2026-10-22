@@ -18,7 +18,7 @@
 # KMS key dediee aux secrets AISIA (rotation automatique annuelle)
 ###############################################################################
 resource "aws_kms_key" "secrets" {
-    description             = "AISIA Secrets Manager encryption key (sprint v6.14.1)"
+  description             = "AISIA Secrets Manager encryption key (sprint v6.14.1)"
   deletion_window_in_days = 30
   enable_key_rotation     = true
 
