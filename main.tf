@@ -94,10 +94,12 @@ resource "aws_internet_gateway" "this" {
 }
 
 resource "aws_subnet" "public" {
-  vpc_id                  = aws_vpc.this.id
-  cidr_block              = var.subnet_cidr
-  availability_zone       = var.availability_zone != "" ? var.availability_zone : data.aws_availability_zones.available.names[0]
-  map_public_ip_on_launch = true
+  vpc_id            = aws_vpc.this.id
+  cidr_block        = var.subnet_cidr
+  availability_zone = var.availability_zone != "" ? var.availability_zone : data.aws_availability_zones.available.names[0]
+  # Pas d'IP publique implicite : seules les instances qui la demandent
+  # explicitement (associate_public_ip_address) en reçoivent une.
+  map_public_ip_on_launch = false
 
   tags = merge(local.common_tags, { Name = "${local.name}-public" })
 }
@@ -186,11 +188,32 @@ resource "aws_security_group" "swarm" {
   }
 
   egress {
-    description = "Tout sortant"
+    description = "Trafic intra-VPC (Swarm, overlay, DNS du VPC)"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.vpc_cidr]
+  }
+
+  # Les nœuds doivent tirer paquets et images (apt, Docker Hub, GHCR, registre
+  # AISIA) : seuls TCP 80/443 sortent, vers `egress_cidr_blocks`. Défaut
+  # Internet justifié ; durcir avec le CIDR d'un proxy ou d'un miroir (README).
+  egress {
+    description = "HTTP sortant (paquets, images)"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    #trivy:ignore:AVD-AWS-0104 Défaut Internet justifié (paquets/images) ; durcir via egress_cidr_blocks.
+    cidr_blocks = var.egress_cidr_blocks
+  }
+
+  egress {
+    description = "HTTPS sortant (paquets, images, API des providers)"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    #trivy:ignore:AVD-AWS-0104 Défaut Internet justifié (images/API) ; durcir via egress_cidr_blocks.
+    cidr_blocks = var.egress_cidr_blocks
   }
 
   tags = merge(local.common_tags, { Name = "${local.name}-sg" })
@@ -219,6 +242,13 @@ resource "aws_instance" "manager" {
   associate_public_ip_address = true
   user_data                   = local.user_data_manager
 
+  # IMDSv2 obligatoire ; 2 sauts pour que les conteneurs Docker y accèdent.
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 2
+  }
+
   root_block_device {
     volume_size = var.node_disk_size_gb
     volume_type = "gp3"
@@ -243,6 +273,13 @@ resource "aws_instance" "worker" {
   key_name                    = var.ssh_public_key != "" ? aws_key_pair.this[0].key_name : null
   associate_public_ip_address = true
   user_data                   = local.user_data_worker
+
+  # IMDSv2 obligatoire ; 2 sauts pour que les conteneurs Docker y accèdent.
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 2
+  }
 
   depends_on = [aws_instance.manager]
 

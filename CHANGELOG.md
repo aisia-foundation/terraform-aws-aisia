@@ -2,6 +2,29 @@
 
 Format : [Keep a Changelog](https://keepachangelog.com/) · Versioning : SemVer.
 
+## [Unreleased] — durcissement IaC (2026-10-23)
+
+Corrige les constats trivy HIGH/CRITICAL. Publication par le train de release.
+
+### Security
+- Swarm : IMDSv2 obligatoire (`metadata_options`), subnet sans IP publique
+  implicite, sortie limitée au VPC + TCP 80/443 vers `egress_cidr_blocks`.
+- `modules/k8s` : API EKS privée par défaut ; Aurora chiffré par une CMK dédiée ;
+  groupes `internal` et `aurora` sans sortie Internet.
+
+### Added
+- Variables `egress_cidr_blocks` (racine), `cluster_endpoint_public_access`,
+  `cluster_endpoint_public_access_cidrs`,
+  `node_security_group_enable_recommended_rules`,
+  `node_security_group_additional_rules`, `db_kms_key_arn` (`modules/k8s`).
+
+### Changed — à lire avant la mise à niveau
+- `cluster_endpoint_public_access` passe de `true` (codé en dur) à `false` :
+  `kubectl` depuis l'extérieur du VPC exige désormais des CIDR explicites.
+- Aurora : une nouvelle clé KMS recrée un cluster existant. Fixer
+  `db_kms_key_arn` sur la clé actuelle (`aws/rds`) pour l'éviter.
+- La sortie des nœuds Swarm hors 80/443 et hors VPC est fermée.
+
 ## [6.14.1] — 2026-09-24
 
 ### Alignement de version — aucun changement fonctionnel

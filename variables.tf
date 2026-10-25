@@ -55,9 +55,9 @@ variable "image_registry" {
 }
 
 variable "image_tag" {
-  description = "Tag d'image AISIA à déployer (ex. v6.14.19)."
+  description = "Tag d'image AISIA à déployer (ex. v6.14.20)."
   type        = string
-  default     = "v6.14.19"
+  default     = "v6.14.20"
 }
 
 variable "domain" {
@@ -147,5 +147,16 @@ variable "ssh_allowed_cidr" {
       can(cidrhost(var.ssh_allowed_cidr, 0))
     )
     error_message = "ssh_allowed_cidr doit être un CIDR valide et ne peut jamais être 0.0.0.0/0. Omettez-le pour désactiver SSH."
+  }
+}
+
+variable "egress_cidr_blocks" {
+  description = "CIDR autorisés en sortie TCP 80/443 (paquets, images, API). Le reste du trafic sortant est limité au VPC. Défaut Internet ; restreindre au CIDR d'un proxy ou d'un miroir pour durcir."
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+  nullable    = false
+  validation {
+    condition     = length(var.egress_cidr_blocks) > 0 && alltrue([for c in var.egress_cidr_blocks : can(cidrhost(c, 0))])
+    error_message = "egress_cidr_blocks doit contenir au moins un CIDR valide."
   }
 }

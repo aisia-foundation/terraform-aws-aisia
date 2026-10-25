@@ -94,11 +94,14 @@ resource "aws_security_group" "internal" {
     cidr_blocks = [var.vpc_cidr]
   }
 
+  # Services internes : sortie limitée au VPC (l'accès Internet des pods passe
+  # par les nœuds EKS et le NAT, pas par ce groupe).
   egress {
+    description = "Sortie limitee au VPC"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.vpc_cidr]
   }
 
   tags = merge(local.common_tags, {

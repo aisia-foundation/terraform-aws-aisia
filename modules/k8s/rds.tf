@@ -38,11 +38,13 @@ resource "aws_security_group" "aurora" {
     cidr_blocks = [var.vpc_cidr]
   }
 
+  # Aurora n'initie aucune connexion vers Internet : sortie limitée au VPC.
   egress {
+    description = "Sortie limitee au VPC"
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.vpc_cidr]
   }
 
   tags = merge(local.common_tags, {
@@ -78,6 +80,37 @@ resource "aws_secretsmanager_secret_version" "aurora_master" {
 }
 
 ###############################################################################
+# Clé KMS du stockage Aurora (CMK, rotation annuelle)
+#
+# Créée seulement si `db_kms_key_arn` est null. ATTENTION : changer la clé d'un
+# cluster Aurora existant le RECRÉE (perte des données hors snapshot). Pour un
+# cluster déjà chiffré par la clé gérée AWS `aws/rds`, passer son ARN dans
+# `db_kms_key_arn` afin de conserver le cluster tel quel.
+###############################################################################
+resource "aws_kms_key" "aurora" {
+  count = var.db_kms_key_arn == null ? 1 : 0
+
+  description             = "AISIA Aurora storage encryption key (${var.cluster_name})"
+  deletion_window_in_days = 30
+  enable_key_rotation     = true
+
+  tags = merge(local.common_tags, {
+    Name = "${var.cluster_name}-aurora-kms"
+  })
+}
+
+resource "aws_kms_alias" "aurora" {
+  count = var.db_kms_key_arn == null ? 1 : 0
+
+  name          = "alias/${var.cluster_name}-aurora"
+  target_key_id = aws_kms_key.aurora[0].key_id
+}
+
+locals {
+  aurora_kms_key_arn = var.db_kms_key_arn != null ? var.db_kms_key_arn : aws_kms_key.aurora[0].arn
+}
+
+###############################################################################
 # Aurora cluster (serverless v2)
 ###############################################################################
 resource "aws_rds_cluster" "aurora" {
@@ -105,8 +138,10 @@ resource "aws_rds_cluster" "aurora" {
   preferred_backup_window      = "02:00-04:00"
   preferred_maintenance_window = "sun:04:30-sun:06:00"
 
-  # Securite
+  # Securite — chiffrement au repos par clé gérée par le client (CMK).
+  # Clé dédiée créée par le module, sauf si `db_kms_key_arn` est fourni.
   storage_encrypted         = true
+  kms_key_id                = local.aurora_kms_key_arn
   deletion_protection       = var.env == "prod" ? true : false
   skip_final_snapshot       = var.env != "prod"
   final_snapshot_identifier = var.env == "prod" ? "${var.cluster_name}-aurora-final-${formatdate("YYYYMMDD-hhmm", timestamp())}" : null

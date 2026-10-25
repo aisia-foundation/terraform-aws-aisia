@@ -64,7 +64,7 @@ variable "image_registry" {
 variable "image_tag" {
   description = "Tag d'image AISIA à déployer."
   type        = string
-  default     = "v6.14.19"
+  default     = "v6.14.20"
 }
 
 variable "domain" {
@@ -144,6 +144,36 @@ variable "node_disk_size_gb" {
   default     = 100
 }
 
+variable "cluster_endpoint_public_access" {
+  description = "Expose l'API Kubernetes EKS sur Internet. Faux par défaut (endpoint privé, joignable depuis le VPC, un VPN ou un bastion). Vrai exige cluster_endpoint_public_access_cidrs."
+  type        = bool
+  default     = false
+}
+
+variable "cluster_endpoint_public_access_cidrs" {
+  description = "CIDR autorisés sur l'endpoint public EKS (IP d'administration, runner CI). Ignoré si l'endpoint public est désactivé ; 0.0.0.0/0 refusé."
+  type        = list(string)
+  default     = []
+  validation {
+    condition = alltrue([
+      for c in var.cluster_endpoint_public_access_cidrs : can(cidrhost(c, 0)) && !endswith(c, "/0")
+    ])
+    error_message = "cluster_endpoint_public_access_cidrs : CIDR valides uniquement, jamais 0.0.0.0/0 ni ::/0."
+  }
+}
+
+variable "node_security_group_enable_recommended_rules" {
+  description = "Conserve les règles recommandées du module EKS amont pour le groupe de sécurité des nœuds, dont la sortie complète via NAT. Mettre false pour n'appliquer que node_security_group_additional_rules."
+  type        = bool
+  default     = true
+}
+
+variable "node_security_group_additional_rules" {
+  description = "Règles supplémentaires du groupe de sécurité des nœuds EKS (format du module terraform-aws-modules/eks). Sert à décrire une sortie restreinte quand les règles recommandées sont désactivées."
+  type        = any
+  default     = {}
+}
+
 ###############################################################################
 # RDS Aurora PostgreSQL serverless v2
 ###############################################################################
@@ -181,6 +211,12 @@ variable "db_backup_retention_days" {
   description = "Retention backups Aurora (jours)."
   type        = number
   default     = 14
+}
+
+variable "db_kms_key_arn" {
+  description = "ARN d'une clé KMS existante pour chiffrer Aurora. Null = le module crée une clé dédiée avec rotation. Changer la clé d'un cluster existant le recrée : pour un cluster déjà chiffré par aws/rds, passer l'ARN de cette clé."
+  type        = string
+  default     = null
 }
 
 ###############################################################################
