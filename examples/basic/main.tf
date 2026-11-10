@@ -27,12 +27,12 @@ provider "aws" {
 ###############################################################################
 module "aisia_aws_swarm" {
   # source  = "aisia-foundation/aisia/aws"
-  # version = "6.14.30"
+  # version = "6.14.31"
   source = "../../"
 
   org_id      = "acme"
   service_key = "C1"
-  image_tag   = "v6.14.30"
+  image_tag   = "v6.14.31"
   tier        = "saas"
 
   region          = "eu-west-3"
